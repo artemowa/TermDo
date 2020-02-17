@@ -94,7 +94,8 @@ class ToDoList:
 
     def get(self, title):
         for item in self.todo_list:
-            if item.title == title: return item
+            if item.title == title:
+                return item
 
         raise ValueError('No such item exists')
 
