@@ -8,8 +8,7 @@ from app import exceptions   # this app errors
 
 class OpenDbMixin:
     '''
-    Mixin that opens the database. Return tuple with connect
-    and cursor objects
+    Mixin that opens the database
     '''
     def open_db(self):
         '''
