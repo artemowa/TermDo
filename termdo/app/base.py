@@ -6,9 +6,9 @@ from config import settings    # with BASE_DIR and DB_NAME
 from app import exceptions   # this app errors
 
 
-class OpenDbMixin:
+class DbMixin:
     '''
-    Mixin that opens the database
+    Mixin that opens and create DB
     '''
     def open_db(self):
         '''
@@ -19,8 +19,14 @@ class OpenDbMixin:
         c = conn.cursor()
         return conn, c
 
+    def create_db(self, conn, c):
+        c.execute(
+            "CREATE TABLE todo"
+            "(title text not null,date text not null)"
+        )
 
-class ToDoItem(OpenDbMixin):
+
+class ToDoItem(DbMixin):
     '''
     ToDo list item
     '''
@@ -79,10 +85,7 @@ class ToDoItem(OpenDbMixin):
             c.execute("INSERT INTO todo VALUES (?,?)", purchases)
         except sqlite3.OperationalError:
             # if DB table has not been created
-            c.execute(
-                "CREATE TABLE todo"
-                "(title text not null,date text not null)"
-            )
+            self.create_db(conn, c)
 
             c.execute("INSERT INTO todo VALUES (?,?)", purchases)
         except sqlite3.IntegrityError:
@@ -113,7 +116,7 @@ class ToDoItem(OpenDbMixin):
         conn.close()
 
 
-class ToDoList(OpenDbMixin):
+class ToDoList(DbMixin):
 
     def __init__(self):
         self.db = os.path.join(settings.BASE_DIR, settings.DB_NAME)
@@ -166,10 +169,7 @@ class ToDoList(OpenDbMixin):
             conn, c = self.open_db()
             c.execute("SELECT * FROM todo ORDER BY date")
         except sqlite3.OperationalError:
-            c.execute(
-                "CREATE TABLE todo"
-                "(title text primary key not null,date text not null)"
-            )
+            self.create_db(conn, c)
             c.execute("SELECT * FROM todo ORDER BY date")
 
         for item in c.fetchall():
