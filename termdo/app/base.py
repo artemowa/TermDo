@@ -8,7 +8,7 @@ from app import exceptions   # this app errors
 
 class DbMixin:
     '''
-    Mixin that opens and create DB
+    Mixin that opens and creates DB
     '''
     def open_db(self):
         '''
